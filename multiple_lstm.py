@@ -120,7 +120,7 @@ print(min(inv_yhat))
 print('Test RMSE: %.3f' % rmse)
 print(inv_y)
 from qpython import qconnection
-conn = qconnection.QConnection('192.168.1.106',9911,'sihao','sh123456')
+conn = qconnection.QConnection
 conn.open()
 data=conn(r'''
 f1:{[cost;x;y] $[y>x+cost;y-cost;y<x-cost;y+cost;x]};
