@@ -1,0 +1,63 @@
+#以下为Kdb+程序，须在Q语言环境下运行
+\l /db/future1
+\c 1000 1000
+getret:{[begdate;enddate;instru;pct]
+   
+    trade_indicator:select from (ungroup select close,time,symbol,date,open:first open,instrument:instru,high,low,
+        upband:((1+pct)*first open),
+        dnband:((1-pct)*first open) by date from bar1[instru]) where date within(begdate,enddate);
+
+    trade_indicator:update position: 1 from trade_indicator where close>upband;
+    trade_indicator:update position:-1 from trade_indicator where close<dnband;
+    trade_indicator:update position: 0 from trade_indicator where ((close-open)*(prev close-open))<=0;
+    trade_indicator:update position:0 from trade_indicator where date<>next date;
+    trade_indicator:update position:0^fills position by date from trade_indicator;
+    trade_indicator:update turn:abs(position-prev position) from trade_indicator;
+    trade_indicator:update cum_turn:sums turn by date from trade_indicator;
+    trade_indicator:update position:?[cum_turn>1;0;position] from trade_indicator;
+    trade_indicator:update newturn:abs(position-prev position) from trade_indicator;
+
+    retdata:() xkey select instrument:first instrument,pct:pct,sum newturn,
+        DailyRet:0^log((exp (sum MinRet))-(sum newturn*0.0003)),
+        day_win: 0^(sum MinRet>0) % sum ?[position<>0;1;0]
+        by date from (select date,instrument,close,position,newturn,MinRet:0^((prev position)*(log (close%prev close)))
+        from trade_indicator) 
+    };
+
+getperf:{[begdate;enddate;instru;pct]
+    retdata:getret[begdate;enddate;instru;pct];
+    result:() xkey select
+        instrument:first instrument,pct:first pct,
+        cum_ret: exp sum DailyRet,
+        annual_ret:365*(sum DailyRet)%((max date)-(min date)),
+        annual_vol : (sqrt 365)*(dev DailyRet),
+        sharpe:(365*(sum DailyRet)%((max date)-(min date)))%  ((sqrt 365)*(dev DailyRet)),
+        maxdd: 1-exp neg max (maxs sums DailyRet)-(sums DailyRet), 
+        win_pro:( sum (DailyRet>0)) % (sum (day_win>0)),
+        trade_num:avg newturn
+        from retdata where not null date
+    };
+/参数优化
+dayret:raze{[pct] raze getperf[2010.01.01;2017.01.01;;pct] each key bar1} '[0.005+0.001*til 20]
+dayret:raze{[pct] raze getperf[2010.01.01;2017.01.01;;pct] each `AG`RU} '[0.005+0.001*til 20]
+/对结果进行处理和排序
+dayret:select from dayret where not null instrument;
+/dayret
+bestperf:`sharpe xdesc select max sharpe, pct:pct@first idesc sharpe,win_pro:win_pro@first idesc sharpe by instrument from dayret;
+bestperf
+/样本内
+instru:`AG;
+plotl select date, sums DailyRet from getret[2010.01.01;2017.01.01;instru;bestperf[instru][`pct]]
+select from getperf[2010.01.01;2017.01.01;instru;bestperf[instru][`pct]]
+/样本外
+instru:`AG;
+plotl select date, sums DailyRet from getret[2017.01.01;2018.01.01;instru;bestperf[instru][`pct]]
+select from getperf[2017.01.01;2018.01.01;instru;bestperf[instru][`pct]]
+/所有品种的样本内表现
+instru:exec instrument from bestperf;
+result1:select from (raze{[instru] select from getperf[2010.01.01;2017.01.01;instru;bestperf[instru][`pct]]} each instru) where not null instrument;
+`sharpe xdesc result1
+/所有品种的样本外表现
+instru:exec instrument from bestperf;
+result2:select from (raze{[instru] select from getperf[2017.01.01;2018.01.01;instru;bestperf[instru][`pct]]} each instru) where not null instrument;
+`sharpe xdesc result2
