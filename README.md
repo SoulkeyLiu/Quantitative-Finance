@@ -1,5 +1,5 @@
 # Quantitative-Finance
-## Created by Soulkey Liu (Ming Liu)
+## Author:Soulkey Liu (Ming Liu)
 For CTA quant who invest in stock and futures and work in hedge fund;  
 If you want to run these codes, what you will need are Python 3.6, Pycharm (or other notebook),Matlab (version 2008-2017) Kdb+ 3.31(Q language, download at https://code.kx.com/q/).
 ### Thanks to
