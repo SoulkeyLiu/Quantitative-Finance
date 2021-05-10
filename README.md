@@ -1,6 +1,6 @@
 # Quantitative-Finance
 ## Author
-Ming(Soulkey) Liu 
+Ming(Soulkey) Liu   
 2021.9 - predicted 2023.9 Ph.D in Management, University of London, Birkbeck collage, UK  
 2018.9 - predicted 2023.9 Ph.D in Finance, Southwestern University of Economics and Finance, China  
 2014.9 - 2018.6           Bsc in Finance, Southwestern University of Economics and Finance, China  
