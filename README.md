@@ -1,10 +1,10 @@
 # Quantitative-Finance
 ## Author
 Ming(Soulkey) Liu 
-2021.9 - predicted 2023.9 Ph.D in Management, University of London, Birkbeck collage, UK
-2018.9 - predicted 2023.9 Ph.D in Finance, Southwestern University of Economics and Finance, China
-2014.9 - 2018.6           Bsc in Finance, Southwestern University of Economics and Finance, China
-2018.1 - 2018.5           visiting student in Economics, University of California, Berkeley, USA
+2021.9 - predicted 2023.9 Ph.D in Management, University of London, Birkbeck collage, UK  
+2018.9 - predicted 2023.9 Ph.D in Finance, Southwestern University of Economics and Finance, China  
+2014.9 - 2018.6           Bsc in Finance, Southwestern University of Economics and Finance, China  
+2018.1 - 2018.5           visiting student in Economics, University of California, Berkeley, USA  
 These codes are targeted for CTA quant who invest in stock and futures and work in hedge fund;  
 If you want to run these codes, what you will need are Python 3.6, Pycharm (or other notebook), Matlab (version 2008-2017) Kdb+ 3.31(Q language, download at https://code.kx.com/q/).
 ### Thanks to 
